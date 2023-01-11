@@ -1,5 +1,7 @@
 {% extends 'PGapp/Main_Logic/base.html' %}
+{% load static %}
 
+{% block css_additional %}<link rel="stylesheet" type="text/css" href="{% static 'PGapp/css/style.css' %}">{% endblock %}
 
 {% block content %}
 	{% for msg in messages %}
@@ -10,9 +12,14 @@
 		</button>
 		</div>
 	{% endfor %}
+	<div class="middle_div_rooms"  style="background-color: #212529;">
+		<div class="middle_div_buttons">
+			<a href="{% url 'PGapp:add_employee' %}" class="btn btn-dark">Add new Rubric</a>
+		</div>
+	</div>
 	{% if rubric_source %}
 		{% for element in rubric_source %}
-			<div class="middle_div"  style="background-color: #212529;">
+			<div class="middle_div" style="background-color: #212529;">
 				<hr>
 				<h3 class="middle_h_white">{{ element.name }}</h3>
 				<p class="middle_p_white">{{ element.description }}</p>

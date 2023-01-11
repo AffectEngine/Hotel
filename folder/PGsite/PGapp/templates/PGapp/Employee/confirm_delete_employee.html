@@ -1,17 +1,23 @@
 {% extends 'PGapp/Main_Logic/base.html' %}
+{% load static %}
 
+{% block css_additional %}<link rel="stylesheet" type="text/css" href="{% static 'PGapp/css/style.css' %}">{% endblock %}
 
 {% block content %}
-	<div>
-		<h1>Employee deleting process</h1>
-		<p>You sure want to delete {{ employee.name }} ?</p>
+	<div class="middle_div_rooms"  style="background-color: #212529;">
+		<hr>
+		<h1 class="middle_h_white">Employee deleting process</h1>
+		<p class="middle_p_white">You sure want to delete {{ employee.name }} ?</p>
 		<form method="post">
 			{% csrf_token %}
-			<button type='submit' class="btn btn-danger btn-lg">Delete</button>
-			<a href="{% url 'PGapp:employees' %}"
-			   class="btn btn-secondary btn-lg active"
-			   role="button"
-			   aria-pressed="true">Cancel</a>
+			<div class="middle_div_buttons">
+				<button type='submit' class="btn btn-danger btn-lg">Delete</button>
+				<a href="{% url 'PGapp:employees' %}"
+				   class="btn btn-secondary btn-lg active"
+				   role="button"
+				   aria-pressed="true">Cancel</a>
+			</div>
 		</form>
+		<hr>
 	</div>
 {% endblock %}

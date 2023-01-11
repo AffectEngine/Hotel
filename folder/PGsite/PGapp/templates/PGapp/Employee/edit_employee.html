@@ -1,13 +1,22 @@
 {% extends 'PGapp/Main_Logic/base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
+
+{% block css_additional %}<link rel="stylesheet" type="text/css" href="{% static 'PGapp/css/style.css' %}">{% endblock %}
 
 
 {% block content %}
-	<h1>Employee editing process</h1>
-	<form method="post">
-		{% csrf_token %}
-		{{ form|crispy }}</br></br>
-		<button type="submit" class="btn btn-warning">Edit</button>
-		<a href="{% url 'PGapp:employees' %}" class="button">Cancel</a>
-	</form>
+	<div class="middle_div_rooms"  style="background-color: #212529;">
+		<hr>
+		<h1 class="middle_h_white">Employee editing process</h1>
+		<form method="post">
+			{% csrf_token %}
+			{{ form|crispy }}</br></br>
+			<div class="middle_div_buttons">
+				<button type="submit" class="btn btn-warning">Edit</button>
+				<a href="{% url 'PGapp:employees' %}" class="btn btn-light">Cancel</a>
+			</div>
+			<hr>
+		</form>
+	</div>
 {% endblock %}
