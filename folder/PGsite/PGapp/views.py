@@ -28,14 +28,6 @@ def signup(request):
 	return render(request, 'signup.html', {'form': form})
 
 
-class LoginToSite(LoginView):
-	pass
-
-
-class LogoutFromSite(LogoutView):
-	pass
-
-
 # CONTENT of the main logic of the SITE
 
 def start_page(request):
@@ -219,3 +211,9 @@ def delete_hotel_room(request, hotel_room_id):
 	else:
 		context = {'hotel_room_source': hotel_room_source}
 		return render(request, 'PGapp/HotelRooms/confirm_delete_hotel_room.html', context)
+
+
+# TESTING
+
+def email_test(request):
+	return render(request, 'PGapp/Account/email.html')

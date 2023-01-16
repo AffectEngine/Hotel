@@ -40,4 +40,7 @@ urlpatterns = [
 	path('hotel_rooms/edit_hotel_room/<int:hotel_room_id>', edit_hotel_room, name='edit_hotel_room'),
 	path('hotel_rooms/delete_hotel_room/<int:hotel_room_id>', delete_hotel_room, name='confirm_delete_hotel_room'),
 	path('hotel_rooms/room_full_view/<int:hotel_room_id>', room_full_view, name='room_full_view'),
+
+
+	path('email_test', email_test, name='email_test'),
 	]
