@@ -4,14 +4,6 @@
 {% block css_additional %}<link rel="stylesheet" type="text/css" href="{% static 'PGapp/css/style.css' %}">{% endblock %}
 
 {% block content %}
-	{% for msg in messages %}
-		<div class="alert alert-success alert-dismissible fade show" role="alert">
-			<strong>Congratulations!</strong>&nbsp;{{ msg }}
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-			</button>
-		</div>
-	{% endfor %}
 	<div class="middle_div_rooms"  style="background-color: #212529;">
 		<div class="middle_div_buttons">
 			<a href="{% url 'PGapp:add_employee' %}" class="btn btn-dark">Add new Employee</a>

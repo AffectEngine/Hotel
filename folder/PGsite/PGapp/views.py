@@ -5,8 +5,6 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
-from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import UserCreationForm
 from django.core.paginator import Paginator
 
 
@@ -120,6 +118,11 @@ def add_employee(request):
 		form = HotelEmployeesForm(request.POST, request.FILES)
 		if form.is_valid():
 			form.save()
+			messages.add_message(
+				request,
+				messages.SUCCESS,
+				'Employee was successfully added.',
+				)
 			return redirect('PGapp:employees')
 		else:
 			raise Exception('Invalid')
@@ -199,6 +202,9 @@ def delete_hotel_room(request, hotel_room_id):
 	else:
 		context = {'hotel_room_source': hotel_room_source}
 		return render(request, 'PGapp/HotelRooms/confirm_delete_hotel_room.html', context)
+
+
+# MESSAGES
 
 
 # TESTING
