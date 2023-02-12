@@ -40,3 +40,9 @@
 
     margin-left: 25%;
 }
+.p-2 {
+    background-color: rgba(33, 37, 41);
+}
+.text-center {
+    color: #ffffff;
+}

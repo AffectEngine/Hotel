@@ -2,7 +2,6 @@ from .models import PGSRoomReserving, PGSRubric, HotelEmployees, HotelRooms
 from django.forms import *
 from django.contrib.postgres.fields import ArrayField
 from django import forms
-from django.core.validators import FileExtensionValidator
 from django.core import validators
 from django.conf import settings
 from easy_thumbnails.widgets import ImageClearableFileInput
@@ -158,3 +157,13 @@ class HotelRoomsForm(forms.ModelForm):
 		model = HotelRooms
 		fields = '__all__'
 
+
+class EmailTestForm(forms.Form):
+	name = forms.CharField(max_length=100, min_length=2)
+	phone = forms.CharField(max_length=70, min_length=11, help_text='Enter your phone in format: +7-000-000-00-00')
+	email = forms.EmailField(max_length=150, min_length=4, help_text='Enter your Email')
+	message = forms.CharField(widget=forms.Textarea, max_length=2000, required=False)
+
+	def clean(self):
+		cleaned_data = super().clean()
+		return cleaned_data

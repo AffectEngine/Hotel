@@ -3,6 +3,7 @@ from .views import *
 from django.contrib.auth.views import LoginView, LogoutView
 
 
+
 app_name = 'PGapp'
 
 urlpatterns = [
@@ -32,7 +33,7 @@ urlpatterns = [
 
 	path('employees', employees, name='employees'),
 	path('add_employee', add_employee, name='add_employee'),
-	path('employees/edit_employee/<int:id>', edit_employee, name='edit_employee'),
+	path('employees/edit_employee/<str:pk>/', edit_employee, name='edit_employee'),
 	path('employees/delete_employee/<int:id>', delete_employee, name='confirm_delete_employee'),
 
 	path('hotel_rooms', hotel_rooms, name='hotel_rooms'),

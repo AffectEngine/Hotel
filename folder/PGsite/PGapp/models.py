@@ -3,7 +3,6 @@ from django.db.models import *
 
 from django.contrib.postgres.fields import *
 from django.core.validators import *
-from django.core.validators import FileExtensionValidator
 from django.core import validators
 
 from easy_thumbnails.fields import ThumbnailerImageField

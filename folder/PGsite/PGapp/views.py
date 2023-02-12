@@ -1,11 +1,12 @@
 from .models import PGSRoomReserving, PGSRubric, HotelEmployees, HotelRooms
-from .forms import PGSRubricForm, PGSRoomReservingForm, HotelEmployeesForm, HotelRoomsForm
+from .forms import PGSRubricForm, PGSRoomReservingForm, HotelEmployeesForm, HotelRoomsForm, EmailTestForm
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.core.mail import send_mail, send_mass_mail
 
 
 # LOGIN-LOGOUT ETC.
@@ -130,24 +131,32 @@ def add_employee(request):
 		return render(request, 'PGapp/Employee/add_employee.html', {'form': HotelEmployeesForm})
 
 
-def edit_employee(request, id):
-	employee = HotelEmployees.objects.get(pk=id)
+def edit_employee(request, pk):
+	employee = HotelEmployees.objects.get(id=pk)
+	form = HotelEmployeesForm(instance=employee)
 	if request.method == 'POST':
 		form = HotelEmployeesForm(request.POST, instance=employee)
 		if form.is_valid():
-			if form.has_changed():
-				form.save()
-				return HttpResponseRedirect(reverse_lazy('PGapp:employees'))
-	else:
-		form = HotelEmployeesForm(instance=employee)
-		context = {'form': form}
-		return render(request, 'PGapp/Employee/edit_employee.html', context)
+			form.save()
+			messages.add_message(
+				request,
+				messages.SUCCESS,
+				'Employee was successfully edited.',
+				)
+			return redirect('/employees')
+	context = {'form': form}
+	return render(request, 'PGapp/Employee/edit_employee.html', context)
 
 
 def delete_employee(request, id):
 	employee = HotelEmployees.objects.get(pk=id)
 	if request.method == 'POST':
 		employee.delete()
+		messages.add_message(
+			request,
+			messages.SUCCESS,
+			'Employee was successfully deleted.',
+			)
 		return HttpResponseRedirect(reverse('PGapp:employees'))
 	else:
 		context = {'employee': employee}
@@ -210,4 +219,19 @@ def delete_hotel_room(request, hotel_room_id):
 # TESTING
 
 def email_test(request):
-	return render(request, 'PGapp/Account/email.html')
+	send_mail(
+		'White',
+		'World',
+		'',
+		['rayih81160@chotunai.com'],
+		fail_silently=False,
+		html_message='<h1>Hello</h1><br><h3>World</h3>',
+		)
+	msg1 = ('message1', 'Sub', '', ['rayih81160@chotunai.com'])
+	msg2 = ('message2', 'Scribe', '', ['rayih81160@chotunai.com'])
+	send_mass_mail((msg1, msg2))
+	return render(request, 'PGapp/Options/send_email.html')
+
+
+
+

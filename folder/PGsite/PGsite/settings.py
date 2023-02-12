@@ -54,6 +54,7 @@ INSTALLED_APPS = [
 	'allauth.socialaccount.providers.github',
 	'allauth.socialaccount.providers.facebook',
 	'allauth.socialaccount.providers.yandex',
+	'widget_tweaks',
 	]
 
 SITE_ID = 1
@@ -61,6 +62,7 @@ SITE_ID = 1
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
+	'django.middleware.http.ConditionalGetMiddleware',
 	'django.middleware.security.SecurityMiddleware',
 	'django.contrib.sessions.middleware.SessionMiddleware',
 	'django.middleware.common.CommonMiddleware',
@@ -224,3 +226,32 @@ LOGIN_REDIRECT_URL = 'PGapp:start_page'
 ACCOUNT_LOGOUT_REDIRECT_URL = 'PGapp:login'
 PASSWORD_RESET_TIMEOUT_DAYS = 3
 
+# Email settings
+EMAIL_BACKENDS = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+
+# Cache settings
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+
+CACHES = {
+	'default': {
+		'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+		'LOCATION': os.path.join(BASE_DIR, 'cache_folder'),
+		},
+	'session_storage': {
+		'BACKEND': 'django_redis.cache.RedisCache',
+		"LOCATION": "redis://redis:6379/1",
+		}
+	}
+
+# CACHES = {
+# 	'default': {
+# 		'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+# 		'LOCATION': os.path.join(BASE_DIR, 'cache_folder'),
+# 		}
+# 	}
