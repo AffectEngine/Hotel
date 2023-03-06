@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import mimetypes
 from pathlib import Path
 import os
 from dotenv import load_dotenv, find_dotenv
@@ -55,6 +55,9 @@ INSTALLED_APPS = [
 	'allauth.socialaccount.providers.facebook',
 	'allauth.socialaccount.providers.yandex',
 	'widget_tweaks',
+	'debug_toolbar',
+	'rest_framework',
+	'corsheaders',
 	]
 
 SITE_ID = 1
@@ -65,11 +68,13 @@ MIDDLEWARE = [
 	'django.middleware.http.ConditionalGetMiddleware',
 	'django.middleware.security.SecurityMiddleware',
 	'django.contrib.sessions.middleware.SessionMiddleware',
+	'corsheaders.middleware.CorsMiddleware',
 	'django.middleware.common.CommonMiddleware',
 	'django.middleware.csrf.CsrfViewMiddleware',
 	'django.contrib.auth.middleware.AuthenticationMiddleware',
 	'django.contrib.messages.middleware.MessageMiddleware',
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'debug_toolbar.middleware.DebugToolbarMiddleware',
 	]
 
 ROOT_URLCONF = 'PGsite.urls'
@@ -126,6 +131,7 @@ SOCIALACCOUNT_PROVIDERS = {
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
+# CUSTOM VALIDATION
 AUTH_PASSWORD_VALIDATORS = [
 	{
 		'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -145,32 +151,7 @@ AUTH_PASSWORD_VALIDATORS = [
 	{
 		'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
 		},
-	{
-		'NAME': 'NoForbiddenCharsValidator',
-		'OPTIONS': {
-			'forbidden_chars': (' ', ',', ', ', '.', ':', ';'),
-			},
-		},
 	]
-
-
-# CUSTOM VALIDATION
-
-class NoForbiddenCharsValidator:
-	def __init__(self, forbidden_chars=(' ',)):
-		self.forbidden_chars = forbidden_chars
-
-	def validate(self, password, user=None):
-		for forbidden_char in self.forbidden_chars:
-			if forbidden_char in password:
-				raise ValidationError(
-					'Password must not contain forbidden characters %s'%', '.join(self.forbidden_chars),
-					code='forbidden_chars_present'
-					)
-
-	def get_help_text(self):
-		return 'Password must not contain forbidden characters %s'%', '.join(self.forbidden_chars)
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
@@ -221,12 +202,13 @@ AUTHENTICATION_BACKENDS = [
 	'allauth.account.auth_backends.AuthenticationBackend',
 	]
 
+# User/SuUser login/logout
 LOGIN_URL = 'PGapp:login'
 LOGIN_REDIRECT_URL = 'PGapp:start_page'
 ACCOUNT_LOGOUT_REDIRECT_URL = 'PGapp:login'
 PASSWORD_RESET_TIMEOUT_DAYS = 3
 
-# Email settings
+# Email
 EMAIL_BACKENDS = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
 EMAIL_USE_TLS = True
@@ -235,7 +217,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
-# Cache settings
+# Cache
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 
 CACHES = {
@@ -249,9 +231,20 @@ CACHES = {
 		}
 	}
 
-# CACHES = {
-# 	'default': {
-# 		'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-# 		'LOCATION': os.path.join(BASE_DIR, 'cache_folder'),
-# 		}
-# 	}
+# Django-debug-toolbar
+INTERNAL_IPS = [
+	"127.0.0.1",
+	]
+mimetypes.add_type("application/javascript", ".js", True)
+
+# Django-cors-headers
+CORS_ORIGIN_ALLOW_ALL = True
+
+# REST
+# Note: comment BrowsableAPIRenderer line while going in production
+REST_FRAMEWORK = {
+	'DEFAULT_RENDERER_CLASSES': [
+		'rest_framework.renderers.JSONRenderer',
+		'rest_framework.renderers.BrowsableAPIRenderer',
+		]
+	}

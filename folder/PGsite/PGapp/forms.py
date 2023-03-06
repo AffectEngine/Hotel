@@ -1,4 +1,4 @@
-from .models import PGSRoomReserving, PGSRubric, HotelEmployees, HotelRooms
+from .models import PGSRubric, HotelEmployees, HotelRooms
 from django.forms import *
 from django.contrib.postgres.fields import ArrayField
 from django import forms
@@ -7,63 +7,8 @@ from django.conf import settings
 from easy_thumbnails.widgets import ImageClearableFileInput
 
 
-class PGSRoomReservingForm(ModelForm):
-	name = forms.CharField(
-		label='Room',
-		min_length=2,
-		widget=forms.TextInput(attrs={
-			'class': 'form-control',
-			'placeholder': 'Enter room name'
-			}))
-	reserving_date = DateField(
-		widget=forms.DateInput(attrs={
-			'class': 'form-control',
-			'placeholder': 'Enter room reserving date'
-			}))
-	reserving_time = TimeField(
-		widget=forms.TimeInput(attrs={
-			'class': 'form-control',
-			'placeholder': 'Enter room reserving time'
-			}))
-	price = IntegerField(
-		widget=forms.NumberInput(attrs={
-			'class': 'form-control',
-			'placeholder': 'Enter room price'
-			}))
-	cancelled = BooleanField(
-		label='Cancel reserving',
-		widget=CheckboxInput(),
-		)
-
-	class Meta:
-		model = PGSRoomReserving
-		fields = '__all__'
-
-	def __init__(self, *args, **kwargs):
-		super(PGSRoomReservingForm, self).__init__(*args, **kwargs)
-		self.fields['cancelled'].required = False
-
-	def clean(self):
-		super().clean()
-		errors = {}
-		if not self.cleaned_data['name']:
-			errors['name'] = ValidationError(
-				'Thou name is too short')
-		if not self.cleaned_data['reserving_date']:
-			errors['reserving_date'] = ValidationError(
-				'Please enter date')
-		if not self.cleaned_data['reserving_time']:
-			errors['reserving_time'] = ValidationError(
-				'Please enter time')
-		if self.cleaned_data['price'] < 0:
-			errors['price'] = ValidationError(
-				'Please enter positive price number')
-		if errors:
-			raise ValidationError(errors)
-
-
 class PGSRubricForm(ModelForm):
-	name = forms.CharField(
+	rubric = forms.CharField(
 		label='Rubric',
 		widget=TextInput(attrs={
 			'class': 'form-control',

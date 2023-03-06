@@ -1,12 +1,18 @@
-from .models import PGSRoomReserving, PGSRubric, HotelEmployees, HotelRooms
-from .forms import PGSRubricForm, PGSRoomReservingForm, HotelEmployeesForm, HotelRoomsForm, EmailTestForm
+from .models import PGSRubric, HotelEmployees, HotelRooms
+from .forms import PGSRubricForm, HotelEmployeesForm, HotelRoomsForm, EmailTestForm
+from django.forms import model_to_dict
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.core.mail import send_mail, send_mass_mail
+
+from .serializers import RubricSerializer
+from rest_framework import generics, viewsets
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 
 # LOGIN-LOGOUT ETC.
@@ -19,51 +25,6 @@ def signup(request):
 
 def start_page(request):
 	return render(request, 'PGapp/Main_Logic/start_page.html')
-
-
-def room_reserving(request):
-	room_source = PGSRoomReserving.objects.all()
-	return render(request, 'PGapp/Room/room_reserving.html', {'title': 'Rooms', 'room_source': room_source})
-
-
-def add_room(request):
-	form = PGSRoomReservingForm()
-	if request.method == 'POST':
-		form = PGSRoomReservingForm(request.POST)
-		if form.is_valid():
-			form.save()
-			messages.success(request, 'Room created successfully')
-			return HttpResponseRedirect(reverse('PGapp:room_reserving'))
-		else:
-			messages.error(request, 'Failure occurs')
-	context = {
-		'form': form,
-		}
-	return render(request, 'PGapp/Room/add_room.html', context)
-
-
-def edit_room(request, id):
-	room = PGSRoomReserving.objects.get(pk=id)
-	if request.method == 'POST':
-		room_form = PGSRoomReservingForm(request.POST, instance=room)
-		if room_form.is_valid():
-			if room_form.has_changed():
-				room_form.save()
-				return HttpResponseRedirect(reverse('PGapp:room_reserving'))
-	else:
-		room_form = PGSRoomReservingForm(instance=room)
-		context = {'form': room_form}
-		return render(request, 'PGapp/Room/edit_room.html', context)
-
-
-def delete_room(request, id):
-	room = PGSRoomReserving.objects.get(pk=id)
-	if request.method == 'POST':
-		room.delete()
-		return HttpResponseRedirect(reverse('PGapp:room_reserving'))
-	else:
-		context = {'room': room}
-		return render(request, 'PGapp/Room/confirm_delete_room.html', context)
 
 
 def rubrics(request):
@@ -88,13 +49,13 @@ def add_rubric(request):
 def edit_rubric(request, id):
 	rubric = PGSRubric.objects.get(pk=id)
 	if request.method == 'POST':
-		rubric_form = PGSRoomReservingForm(request.POST, instance=rubric)
+		rubric_form = PGSRubricForm(request.POST, instance=rubric)
 		if rubric_form.is_valid():
 			if rubric_form.has_changed():
 				rubric_form.save()
 				return HttpResponseRedirect(reverse('PGapp:rubrics'))
 	else:
-		rubric_form = PGSRoomReservingForm(instance=rubric)
+		rubric_form = PGSRubricForm(instance=rubric)
 		context = {'form': rubric_form}
 		return render(request, 'PGapp/Rubric/edit_rubric.html', context)
 
@@ -213,7 +174,69 @@ def delete_hotel_room(request, hotel_room_id):
 		return render(request, 'PGapp/HotelRooms/confirm_delete_hotel_room.html', context)
 
 
-# MESSAGES
+# REST
+
+class RubricViewSet(viewsets.ModelViewSet):
+	queryset = PGSRubric.objects.all()
+	serializer_class = RubricSerializer
+
+# class RubricApiList(generics.ListCreateAPIView):
+# 	queryset = PGSRubric.objects.all()
+# 	serializer_class = RubricSerializer
+#
+#
+# class RubricApiUpdate(generics.UpdateAPIView):
+# 	queryset = PGSRubric.objects.all()
+# 	serializer_class = RubricSerializer
+#
+#
+# class RubricApiDetailView(generics.RetrieveUpdateDestroyAPIView):
+# 	queryset = PGSRubric.objects.all()
+# 	serializer_class = RubricSerializer
+
+
+# class RubricAPIView(APIView):
+# 	def get(self, request):
+# 		rub_objects = PGSRubric.objects.all()
+# 		return Response({'rubrics': RubricSerializer(rub_objects, many=True).data})
+#
+# 	def post(self, request):
+# 		serializer = RubricSerializer(data=request.data)
+# 		serializer.is_valid(raise_exception=True)
+# 		serializer.save()
+# 		return Response({'post': serializer.data})
+#
+# 	def put(self, request, *args, **kwargs):
+# 		pk = kwargs.get('pk', None)
+# 		if not pk:
+# 			return Response({'error': 'Method PUT not allowed'})
+#
+# 		try:
+# 			instance = PGSRubric.objects.get(pk=pk)
+# 		except:
+# 			return Response({'error': 'Object does not exists'})
+#
+# 		serializer = RubricSerializer(data=request.data, instance=instance)
+# 		serializer.is_valid(raise_exception=True)
+# 		serializer.save()
+# 		return Response({'post': serializer.data})
+#
+# 	def delete(self, request, *args, **kwargs):
+# 		pk = kwargs.get('pk', None)
+# 		if not pk:
+# 			return Response({'error': 'Method DELETE not allowed'})
+# 		try:
+# 			instance = PGSRubric.objects.get(pk=pk)
+# 		except:
+# 			return Response({'error': 'Object does not exists'})
+#
+# 		instance.delete()
+#
+# 		return Response({'post': str(pk) + ' was deleted'})
+
+# class RubricAPIView(generics.ListAPIView):
+# 	queryset = PGSRubric.objects.all()
+# 	serializer_class = RubricSerializer
 
 
 # TESTING
@@ -231,7 +254,3 @@ def email_test(request):
 	msg2 = ('message2', 'Scribe', '', ['rayih81160@chotunai.com'])
 	send_mass_mail((msg1, msg2))
 	return render(request, 'PGapp/Options/send_email.html')
-
-
-
-
