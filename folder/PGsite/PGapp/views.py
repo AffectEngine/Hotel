@@ -1,6 +1,8 @@
-from .models import PGSRubric, HotelEmployees, HotelRooms
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
+
+from .models import PGSRubric, HotelEmployees, HotelRooms, PGSThing
 from .forms import PGSRubricForm, HotelEmployeesForm, HotelRoomsForm, EmailTestForm
-from django.forms import model_to_dict
 
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
@@ -9,9 +11,9 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.core.mail import send_mail, send_mass_mail
 
-from .serializers import RubricSerializer
+from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
+from .serializers import RubricSerializer, ThingSerializer
 from rest_framework import generics, viewsets
-from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
@@ -176,9 +178,33 @@ def delete_hotel_room(request, hotel_room_id):
 
 # REST
 
-class RubricViewSet(viewsets.ModelViewSet):
+class RubricApiList(generics.ListCreateAPIView):
 	queryset = PGSRubric.objects.all()
 	serializer_class = RubricSerializer
+	permission_classes = (IsAuthenticatedOrReadOnly, )
+
+
+class RubricApiUpdate(generics.RetrieveUpdateAPIView):
+	queryset = PGSRubric.objects.all()
+	serializer_class = RubricSerializer
+	permission_classes = (IsOwnerOrReadOnly, )
+
+
+class RubricApiDestroy(generics.RetrieveUpdateDestroyAPIView):
+	queryset = PGSRubric.objects.all()
+	serializer_class = RubricSerializer
+	permission_classes = (IsAdminOrReadOnly, )
+
+
+class ThingViewSet(viewsets.ModelViewSet):
+	queryset = PGSThing.objects.all()
+	serializer_class = ThingSerializer
+
+	@action(methods=['get'], detail=True)
+	def things_rubrics_list_display(self, request, pk=None):
+		cats = PGSRubric.objects.get(pk=pk)
+		return Response({'cats': cats.rubric})
+
 
 # class RubricApiList(generics.ListCreateAPIView):
 # 	queryset = PGSRubric.objects.all()

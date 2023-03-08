@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import *
 
@@ -13,6 +14,7 @@ class PGSRubric(models.Model):
 	rubric = models.CharField(max_length=50, verbose_name='Rubric')
 	description = models.TextField(verbose_name='Description')
 	tags = ArrayField(base_field=models.CharField(max_length=90), verbose_name='Tags')
+	user = models.ForeignKey(User, verbose_name='User', on_delete=models.CASCADE)
 
 	def __str__(self):
 		return self.rubric
@@ -93,7 +95,7 @@ class HotelRooms(models.Model):
 	description = TextField(verbose_name="Room Description")
 
 	def get_absolute_url(self):
-		return "/hotel_rooms/room_full_view/%i" % self.id
+		return "/hotel_rooms/room_full_view/%i"%self.id
 
 	class Meta:
 		verbose_name = 'Hotel Room'
