@@ -3,11 +3,15 @@
 
 
 {% block content %}
-	<h1>Hotel room editing process</h1>
-	<form method="post" enctype="multipart/form-data">
-		{% csrf_token %}
-		{{ hotel_form|crispy }}</br></br>
-		<button type="submit" class="btn btn-warning">Edit</button>
-		<a href="{% url 'PGapp:hotel_rooms' %}" class="button">Cancel</a>
-	</form>
+	<div class="middle_div">
+		<hr>
+		<h1>Hotel room editing process</h1>
+		<form method="post" enctype="multipart/form-data">
+			{% csrf_token %}
+			{{ hotel_form|crispy }}<br><br>
+			<button type="submit" class="btn btn-warning">Edit</button>
+			<a href="{% url 'PGapp:hotel_rooms' %}" class="button">Cancel</a>
+			<hr>
+		</form>
+	</div>
 {% endblock %}

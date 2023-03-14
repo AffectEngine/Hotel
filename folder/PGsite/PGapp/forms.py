@@ -12,13 +12,11 @@ class PGSRubricForm(ModelForm):
 		label='Rubric',
 		widget=TextInput(attrs={
 			'class': 'form-control',
-			'placeholder': 'Enter rubric name',
 			}))
 	description = forms.CharField(
 		label='Description',
 		widget=Textarea(attrs={
 			'class': 'form-control',
-			'placeholder': 'Enter rubric name',
 			}))
 	tags = ArrayField(base_field=forms.CharField(max_length=90))
 
@@ -76,7 +74,6 @@ class HotelRoomsForm(forms.ModelForm):
 	title = forms.CharField(
 		label='Room Title',
 		widget=TextInput(attrs={
-			'placeholder': 'Enter room title',
 			}))
 	picture = forms.ImageField(
 		label='Room Picture',
@@ -90,12 +87,10 @@ class HotelRoomsForm(forms.ModelForm):
 	price = forms.IntegerField(
 		label='Room Price',
 		widget=NumberInput(attrs={
-			'placeholder': 'Enter room price',
 			}))
 	description = forms.CharField(
 		label='Description',
 		widget=Textarea(attrs={
-			'placeholder': 'Enter room description',
 			}))
 
 	class Meta:

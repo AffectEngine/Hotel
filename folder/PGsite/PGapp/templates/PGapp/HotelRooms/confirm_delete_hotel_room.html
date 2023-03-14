@@ -2,7 +2,8 @@
 
 
 {% block content %}
-	<div>
+	<div class="middle_div">
+	<hr>
 		<h1>Hotel room deleting process</h1>
 		<p>You sure want to delete {{ hotel_room_source.title }} ?</p>
 		<form method="post">
@@ -12,6 +13,7 @@
 			   class="btn btn-secondary btn-lg active"
 			   role="button"
 			   aria-pressed="true">Cancel</a>
+			<hr>
 		</form>
 	</div>
 {% endblock %}

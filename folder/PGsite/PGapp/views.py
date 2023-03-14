@@ -8,6 +8,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
 from django.core.paginator import Paginator
 from django.core.mail import send_mail, send_mass_mail
 
@@ -15,12 +16,21 @@ from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .serializers import RubricSerializer, ThingSerializer
 from rest_framework import generics, viewsets
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 
 
 # LOGIN-LOGOUT ETC.
 
-def signup(request):
-	return render(request, 'PGapp/Account/signup.html')
+def register_page(request):
+	form = UserCreationForm
+
+	if request.method == 'POST':
+		form = UserCreationForm(request.POST)
+		if form.is_valid():
+			form.save()
+
+	context = {'form': form}
+	return render(request, 'PGapp/Account/register.html', context)
 
 
 # CONTENT of the main logic of the SITE
@@ -66,6 +76,7 @@ def delete_rubric(request, id):
 	rubric = PGSRubric.objects.get(pk=id)
 	if request.method == 'POST':
 		rubric.delete()
+		messages.success(request, 'Rubric was successfully deleted.')
 		return HttpResponseRedirect(reverse('PGapp:rubrics'))
 	else:
 		context = {'rubric': rubric}
@@ -151,11 +162,6 @@ def add_hotel_room(request):
 		return render(request, 'PGapp/HotelRooms/add_hotel_room.html', {'hotel_form': HotelRoomsForm})
 
 
-def room_full_view(request, hotel_room_id):
-	hotel_room_source = HotelRooms.objects.get(pk=hotel_room_id)
-	return render(request, 'PGapp/HotelRooms/room_full_view.html', {'hotel_room_source': hotel_room_source})
-
-
 def edit_hotel_room(request, hotel_room_id):
 	hotel_room_source = HotelRooms.objects.get(pk=hotel_room_id)
 	hotel_form = HotelRoomsForm(request.POST or None, request.FILES or None, instance=hotel_room_source)
@@ -170,30 +176,43 @@ def delete_hotel_room(request, hotel_room_id):
 	hotel_room_source = HotelRooms.objects.get(pk=hotel_room_id)
 	if request.method == 'POST':
 		hotel_room_source.delete()
+		messages.success(request, 'Hotel room was successfully deleted.')
 		return HttpResponseRedirect(reverse('PGapp:hotel_rooms'))
 	else:
 		context = {'hotel_room_source': hotel_room_source}
 		return render(request, 'PGapp/HotelRooms/confirm_delete_hotel_room.html', context)
 
 
+def room_full_view(request, hotel_room_id):
+	hotel_room_source = HotelRooms.objects.get(pk=hotel_room_id)
+	return render(request, 'PGapp/HotelRooms/room_full_view.html', {'hotel_room_source': hotel_room_source})
+
+
 # REST
+
+class RubricApiListPagination(PageNumberPagination):
+	page_size = 2
+	page_size_query_param = 'page_size'
+	max_page_size = 10
+
 
 class RubricApiList(generics.ListCreateAPIView):
 	queryset = PGSRubric.objects.all()
 	serializer_class = RubricSerializer
-	permission_classes = (IsAuthenticatedOrReadOnly, )
+	permission_classes = (IsAdminUser,)
+	pagination_class = RubricApiListPagination
 
 
 class RubricApiUpdate(generics.RetrieveUpdateAPIView):
 	queryset = PGSRubric.objects.all()
 	serializer_class = RubricSerializer
-	permission_classes = (IsOwnerOrReadOnly, )
+	permission_classes = (IsAdminUser,)
 
 
 class RubricApiDestroy(generics.RetrieveUpdateDestroyAPIView):
 	queryset = PGSRubric.objects.all()
 	serializer_class = RubricSerializer
-	permission_classes = (IsAdminOrReadOnly, )
+	permission_classes = (IsAdminOrReadOnly,)
 
 
 class ThingViewSet(viewsets.ModelViewSet):

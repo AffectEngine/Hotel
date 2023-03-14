@@ -1,17 +1,15 @@
 {% extends 'PGapp/Main_Logic/base.html' %}
-{% load static %}
 
-{% block css_additional %}<link rel="stylesheet" type="text/css" href="{% static 'PGapp/css/style.css' %}">{% endblock %}
 
 {% block content %}
-	<div class="middle_div_rooms"  style="background-color: #212529;">
+	<div class="middle_div">
 		<div class="middle_div_buttons">
 			<a href="{% url 'PGapp:add_employee' %}" class="btn btn-dark">Add new Employee</a>
 		</div>
 	</div>
 	{% if employee_source %}
 		{% for element in employee_source %}
-			<div class="middle_div_rooms"  style="background-color: #212529;">
+			<div class="middle_div"  style="background-color: #212529;">
 				<hr>
 				<form method="post" enctype="multipart/form-data">
 					{% if element.photo %}
@@ -34,6 +32,10 @@
 			</br>
 		{% endfor %}
 	{% else %}
-		<p>Nothing is here</p>
+		<div class="middle_div_rooms">
+			<div class="middle_div_buttons">
+				<p>Nothing is here</p>
+			</div>
+		</div>
 	{% endif %}
 {% endblock %}

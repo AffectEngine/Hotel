@@ -1,13 +1,12 @@
 from django.urls import path, include
 from .views import *
 from django.contrib.auth.views import LoginView, LogoutView
-from rest_framework import routers
 
 app_name = 'PGapp'
 
 urlpatterns = [
 	path('', start_page, name='start_page'),
-	path('accounts/signup/', signup, name='signup'),
+	path('accounts/register/', register_page, name='register'),
 	path(
 		'accounts/login/',
 		LoginView.as_view(template_name='PGapp/Account/login.html', next_page='PGapp:start_page'),

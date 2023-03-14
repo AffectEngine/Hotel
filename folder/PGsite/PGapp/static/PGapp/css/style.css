@@ -4,18 +4,19 @@
 .middle_div {
     margin: auto;
     width: 30%;
+    text-align: center;
 }
-.middle_div_rooms {
+.middle_div_message {
+    color: #6da838;
     margin: auto;
     width: 30%;
+    text-align: center;
 }
 .middle_div_buttons {
-    width: 44%;
-    margin-left: 37%;
+    text-align: center;
 }
 .middle_div_paginator {
-    margin: auto;
-    width: 8%;
+    text-align: center;
 }
 .middle_h {
     text-align: center;
@@ -42,7 +43,12 @@
 }
 .p-2 {
     background-color: rgba(33, 37, 41);
+    color: #ffffff;
+    margin: 30%;
+    width: 30%;
 }
 .text-center {
-    color: #ffffff;
+    margin: 30%;
 }
+
+
