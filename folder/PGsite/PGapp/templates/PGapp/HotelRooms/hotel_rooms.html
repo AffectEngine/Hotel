@@ -2,43 +2,48 @@
 
 
 {% block content %}
-	{% for msg in messages %}
-		<div class="alert alert-success alert-dismissible fade show" role="alert">
-			<strong>Congratulations!</strong>&nbsp;{{ msg }}
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-			</button>
+	<div class="middle_div">
+		<div class="middle_div_buttons">
+			<a href="{% url 'PGapp:add_hotel_room' %}" class="btn btn-dark">Add new Room</a>
 		</div>
-	{% endfor %}
+	</div>
 	{% if hotel_room_source %}
 		{% for element in hotel_room_source %}
-			<div class="w-25 p-3" style="background-color: #9EC4DB;">
+			<div class="middle_div" style="background-color: #212529;">
+				<hr>
 				<form method="post" enctype="multipart/form-data">
 					{% if element.picture_thumbnail %}
-						<img src="{{ element.picture_thumbnail.url }}">
+						<img src="{{ element.picture_thumbnail.url }}" class="middle_image">
 					{% endif %}
-					<p>{{ element.title }}</p>
-					<p>{{ element.price }}</p>
-					<p>{{ element.description }}</p>
+					<div class="middle_div">
+						<a href="{% url 'PGapp:room_full_view' element.id %}" class="btn btn-outline-light">
+							<p class="middle_p">{{ element.title }}</p></a></div>
+					<p class="middle_p_white">{{ element.price }}$ / day</p>
+					<p class="middle_p_white">{{ element.description }}</p>
+					<div class="middle_div_buttons">
+						<a href="{% url 'PGapp:edit_hotel_room' element.id %}"
+						   class="btn btn-light">Edit</a>
+						<a href="{% url 'PGapp:confirm_delete_hotel_room' element.id %}"
+						   class="btn btn-light">Delete</a>
+					<hr>
+					</div>
 				</form>
-			</div>
-			<div>
-				<a href="{% url 'PGapp:edit_hotel_room' element.id %}"
-				   class="btn btn-info">Edit</a>
-				<a href="{% url 'PGapp:confirm_delete_hotel_room' element.id %}"
-				   class="btn btn-danger">Delete</a>
 			</div>
 			</br>
 		{% endfor %}
 	{% else %}
-		<p>Nothing is here</p>
+		<div class="middle_div">
+			<div class="middle_div_buttons">
+				<p>Nothing is here</p>
+			</div>
+		</div>
 	{% endif %}
-	<div>
+	<div class="middle_div_paginator">
 		{% if page.has_previous %}
 			<a href="?page={{ page.previous_page_number }}">&lt;</a>
 			&nbsp;&nbsp;|&nbsp;&nbsp;
 		{% endif %}
-		Page №{{ page.number }} of {{ page.paginator.num_pages }}
+		Page {{ page.number }} of {{ page.paginator.num_pages }}
 		{% if page.has_next %}
 			&nbsp;&nbsp;|&nbsp;&nbsp;
 			<a href="?page={{ page.next_page_number }}">&gt;</a>

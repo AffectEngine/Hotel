@@ -1,0 +1,18 @@
+{% extends 'PGapp/Main_Logic/base.html' %}
+
+
+{% block content %}
+	{% if hotel_room_source %}
+		<div>
+			<form method="post" enctype="multipart/form-data">
+				{% if hotel_room_source.picture %}
+					<img src="{{ hotel_room_source.picture.url }}" class="middle_image_high_format">
+				{% endif %}
+				<p class="middle_div" style="background-color: #212529; color: #ffffff">{{ hotel_room_source.title }}</p>
+			</form>
+		</div>
+		</br>
+	{% else %}
+		<p>Nothing is here</p>
+	{% endif %}
+{% endblock %}

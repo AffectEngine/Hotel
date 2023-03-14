@@ -3,11 +3,17 @@
 
 
 {% block content %}
-	<h1>Employee editing process</h1>
-	<form method="post">
-		{% csrf_token %}
-		{{ form|crispy }}</br></br>
-		<button type="submit" class="btn btn-warning">Edit</button>
-		<a href="{% url 'PGapp:employees' %}" class="button">Cancel</a>
-	</form>
+	<div class="middle_div">
+		<hr>
+		<h1>Employee editing process</h1>
+		<form method="post">
+			{% csrf_token %}
+			{{ form|crispy }}<br><br>
+			<div class="middle_div_buttons">
+				<button type="submit" class="btn btn-warning">Edit</button>
+				<a href="{% url 'PGapp:employees' %}" class="btn btn-light">Cancel</a>
+			</div>
+			<hr>
+		</form>
+	</div>
 {% endblock %}

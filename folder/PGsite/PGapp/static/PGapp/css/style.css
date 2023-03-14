@@ -1,1 +1,54 @@
+.form-group {
+    margin-top: 10px;
+}
+.middle_div {
+    margin: auto;
+    width: 30%;
+    text-align: center;
+}
+.middle_div_message {
+    color: #6da838;
+    margin: auto;
+    width: 30%;
+    text-align: center;
+}
+.middle_div_buttons {
+    text-align: center;
+}
+.middle_div_paginator {
+    text-align: center;
+}
+.middle_h {
+    text-align: center;
+}
+.middle_h_white {
+    text-align: center;
+    color: white;
+}
+.middle_p {
+    text-align: center;
+}
+.middle_p_white {
+    text-align: center;
+    color: white;
+}
+.middle_image {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.middle_image_high_format {
+
+    margin-left: 25%;
+}
+.p-2 {
+    background-color: rgba(33, 37, 41);
+    color: #ffffff;
+    margin: 30%;
+    width: 30%;
+}
+.text-center {
+    margin: 30%;
+}
+
 

@@ -2,37 +2,40 @@
 
 
 {% block content %}
-	{% for msg in messages %}
-		<div class="alert alert-success alert-dismissible fade show" role="alert">
-			<strong>Congratulations!</strong>&nbsp;{{ msg }}
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-		</button>
+	<div class="middle_div">
+		<div class="middle_div_buttons">
+			<a href="{% url 'PGapp:add_employee' %}" class="btn btn-dark">Add new Employee</a>
 		</div>
-	{% endfor %}
+	</div>
 	{% if employee_source %}
 		{% for element in employee_source %}
-			<div class="w-25 p-3" style="background-color: #9EC4DB;">
+			<div class="middle_div"  style="background-color: #212529;">
+				<hr>
 				<form method="post" enctype="multipart/form-data">
 					{% if element.photo %}
-						<img src="{{ element.photo.url }}" height="200" width="170">
+						<img src="{{ element.photo.url }}" height="200" width="170" class="middle_image">
 					{% endif %}
-					<h3>{{ element.first_name }}&nbsp;{{ element.last_name }}</h3>
-					<p>{{ element.birth_date }}</p>
-					<p>{{ element.address }}</p>
-					<p>{{ element.hire_date }}</p>
-					<p>{{ element.phone }}</p>
+					<h3 class="middle_h_white">{{ element.first_name }}&nbsp;{{ element.last_name }}</h3>
+					<p class="middle_p_white">{{ element.birth_date }}</p>
+					<p class="middle_p_white">{{ element.address }}</p>
+					<p class="middle_p_white">{{ element.hire_date }}</p>
+					<p class="middle_p_white">{{ element.phone }}</p>
+					<div class="middle_div_buttons">
+						<a href="{% url 'PGapp:edit_employee' element.id %}"
+						   class="btn btn-light">Edit</a>
+						<a href="{% url 'PGapp:confirm_delete_employee' element.id %}"
+						   class="btn btn-light">Delete</a>
+					</div>
+					<hr>
 				</form>
-			</div>
-			<div>
-				<a href="{% url 'PGapp:edit_employee' element.id %}"
-				   class="btn btn-info">Edit</a>
-				<a href="{% url 'PGapp:confirm_delete_employee' element.id %}"
-				   class="btn btn-danger">Delete</a>
 			</div>
 			</br>
 		{% endfor %}
 	{% else %}
-		<p>Nothing is here</p>
+		<div class="middle_div_rooms">
+			<div class="middle_div_buttons">
+				<p>Nothing is here</p>
+			</div>
+		</div>
 	{% endif %}
 {% endblock %}

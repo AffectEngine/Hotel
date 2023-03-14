@@ -3,10 +3,14 @@
 
 
 {% block content %}
-	<form method="POST" action="{% url 'PGapp:add_rubric' %}" enctype="multipart/form-data">
-		{% csrf_token %}
-		{{ form|crispy }}</br></br>
-		<button type="submit" class="btn btn-success">Add</button>
-		<a href="{% url 'PGapp:rubrics' %}" class="button">Cancel</a>
-	</form>
+	<div class="middle_div">
+	<hr>
+		<form method="POST" action="{% url 'PGapp:add_rubric' %}" enctype="multipart/form-data">
+			{% csrf_token %}
+			{{ form|crispy }}<br><br>
+			<button type="submit" class="btn btn-success">Add</button>
+			<a href="{% url 'PGapp:rubrics' %}" class="button">Cancel</a>
+		<hr>
+		</form>
+	</div>
 {% endblock %}

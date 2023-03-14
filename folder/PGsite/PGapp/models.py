@@ -1,46 +1,46 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import *
 
 from django.contrib.postgres.fields import *
 from django.core.validators import *
-from django.core.validators import FileExtensionValidator
 from django.core import validators
+
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 
 from easy_thumbnails.fields import ThumbnailerImageField
 
 
-class PGSRoomReserving(models.Model):
-	objects = models.Manager()
-	name = models.CharField(max_length=50, verbose_name='Room')
-	reserving_date = DateField(verbose_name='Reserving date')
-	reserving_time = TimeField(verbose_name='Reserving time')
-	price = IntegerField(verbose_name='Room price')
-	cancelled = models.BooleanField(default=False, verbose_name='Cancel reserving')
-
-	def __str__(self):
-		return self.name
-
-	class Meta:
-		verbose_name = 'Reserving'
-		verbose_name_plural = 'Reservings'
-		ordering = ['name']
-		get_latest_by = 'reserving'
-
-
 class PGSRubric(models.Model):
 	objects = models.Manager()
-	name = models.CharField(max_length=50, verbose_name='Rubric')
+	rubric = models.CharField(max_length=50, verbose_name='Rubric')
 	description = models.TextField(verbose_name='Description')
 	tags = ArrayField(base_field=models.CharField(max_length=90), verbose_name='Tags')
+	user = models.ForeignKey(User, verbose_name='User', on_delete=models.CASCADE)
 
 	def __str__(self):
-		return self.name
+		return self.rubric
 
 	class Meta:
 		verbose_name = 'Rubric'
 		verbose_name_plural = 'Rubrics'
-		ordering = ['name']
-		get_latest_by = 'name'
+		ordering = ['rubric']
+		get_latest_by = 'rubric'
+
+
+# Testing radio_fields in Admin Panel
+class PGSThing(models.Model):
+	objects = models.Manager()
+	thing_itself = models.ForeignKey(PGSRubric, on_delete=models.CASCADE)
+	hierarchy = models.IntegerField(verbose_name='Hierarchy')
+
+	class Meta:
+		ordering = ['thing_itself']
+		verbose_name = 'Thing'
+		verbose_name_plural = 'Things'
 
 
 class HotelEmployees(models.Model):
@@ -99,7 +99,15 @@ class HotelRooms(models.Model):
 	price = IntegerField(verbose_name="Room Price")
 	description = TextField(verbose_name="Room Description")
 
+	def get_absolute_url(self):
+		return "/hotel_rooms/room_full_view/%i"%self.id
+
 	class Meta:
 		verbose_name = 'Hotel Room'
 		verbose_name_plural = 'Hotel Rooms'
 
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+	if created:
+		Token.objects.create(user=instance)

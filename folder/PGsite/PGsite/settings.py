@@ -9,114 +9,152 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import mimetypes
+from datetime import timedelta
 from pathlib import Path
 import os
 from dotenv import load_dotenv, find_dotenv
-
+from django.core.exceptions import ValidationError
 
 load_dotenv(find_dotenv())
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-s6@y9kpv!!9+eb0hw5d5^1n$0c@8jo+my)0g=s71)jme^l(8x6'
+SECRET_KEY = os.environ.get("DJANGO_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 # Application definition
 
 INSTALLED_APPS = [
-    'PGapp',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.postgres',
-    'django_extensions',
-    'crispy_forms',
-    'django_cleanup',
-    'easy_thumbnails',
-]
+	'PGapp',
+	'django.contrib.admin',
+	'django.contrib.auth',
+	'django.contrib.contenttypes',
+	'django.contrib.sessions',
+	'django.contrib.messages',
+	'django.contrib.staticfiles',
+	'django.contrib.postgres',
+	'django.contrib.sites',
+	'django_extensions',
+	'crispy_forms',
+	'django_cleanup',
+	'easy_thumbnails',
+	'allauth',
+	'allauth.account',
+	'allauth.socialaccount',
+	'allauth.socialaccount.providers.google',
+	'allauth.socialaccount.providers.github',
+	'allauth.socialaccount.providers.facebook',
+	'allauth.socialaccount.providers.yandex',
+	'widget_tweaks',
+	'debug_toolbar',
+	'corsheaders',
+	'rest_framework',
+	'rest_framework.authtoken',
+	'djoser',
+	]
+
+SITE_ID = 1
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+	'django.middleware.http.ConditionalGetMiddleware',
+	'django.middleware.security.SecurityMiddleware',
+	'django.contrib.sessions.middleware.SessionMiddleware',
+	'corsheaders.middleware.CorsMiddleware',
+	'django.middleware.common.CommonMiddleware',
+	'django.middleware.csrf.CsrfViewMiddleware',
+	'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'django.contrib.messages.middleware.MessageMiddleware',
+	'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'debug_toolbar.middleware.DebugToolbarMiddleware',
+	]
 
 ROOT_URLCONF = 'PGsite.urls'
 
 TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                ],
-            },
-        },
-    ]
+	{
+		'BACKEND': 'django.template.backends.django.DjangoTemplates',
+		'DIRS': [
+			os.path.join(BASE_DIR, 'templates'),
+			os.path.join(BASE_DIR, 'PGapp', 'templates', 'PGapp'),
+			],
+		'APP_DIRS': True,
+		'OPTIONS': {
+			'context_processors': [
+				'django.template.context_processors.debug',
+				'django.template.context_processors.request',
+				'django.contrib.auth.context_processors.auth',
+				'django.contrib.messages.context_processors.messages',
+				'django.template.context_processors.request',
+				],
+			},
+		},
+	]
 
 WSGI_APPLICATION = 'PGsite.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": os.environ.get("SQL_ENGINE"),
-        "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
-        "USER": os.environ.get("SQL_USER", "user"),
-        "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
-        "HOST": os.environ.get("SQL_HOST", "localhost"),
-        "PORT": os.environ.get("SQL_PORT", "5432"),
-    }
-}
+	"default": {
+		"ENGINE": os.environ.get("SQL_ENGINE"),
+		"NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
+		"USER": os.environ.get("SQL_USER", "user"),
+		"PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
+		"HOST": os.environ.get("SQL_HOST", "localhost"),
+		"PORT": os.environ.get("SQL_PORT", "5432"),
+		}
+	}
 
-
+SOCIALACCOUNT_PROVIDERS = {
+	'google': {
+		'SCOPE': [
+			'profile',
+			'email',
+			],
+		'AUTH_PARAMS': {
+			'access_type': 'online',
+			},
+		'OAUTH_PKCE_ENABLED': True,
+		}
+	}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
+# CUSTOM VALIDATION
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
-
+	{
+		'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+		'OPTIONS': {
+			'max_similarity': 0.5,
+			},
+		},
+	{
+		'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+		'OPTIONS': {
+			'min_length': 11,
+			},
+		},
+	{
+		'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+		},
+	{
+		'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+		},
+	]
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
@@ -140,13 +178,13 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 THUMBNAIL_ALIASES = {
-    'PGapp.HotelRooms.picture': {
-        'default': {
-            'size': {400, 300},
-            'crop': 'scale',
-            },
-        },
-    }
+	'PGapp.HotelRooms.picture': {
+		'default': {
+			'size': {400, 300},
+			'crop': 'scale',
+			},
+		},
+	}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -154,11 +192,159 @@ THUMBNAIL_ALIASES = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 BOOTSTRAP4 = {
-    'required_css_class': 'required',
-    'success_css_class': 'has_success',
-    'error_css_class': 'has_error',
+	'required_css_class': 'required',
+	'success_css_class': 'has_success',
+	'error_css_class': 'has_error',
 
-    'horizontal_field_class': '',
-    'horizontal_error_class': '',
-}
+	'horizontal_field_class': '',
+	'horizontal_error_class': '',
+	}
 
+AUTHENTICATION_BACKENDS = [
+	'django.contrib.auth.backends.ModelBackend',
+	'allauth.account.auth_backends.AuthenticationBackend',
+	]
+
+# User/SuUser login/logout
+LOGIN_URL = 'PGapp:login'
+LOGIN_REDIRECT_URL = 'PGapp:start_page'
+ACCOUNT_LOGOUT_REDIRECT_URL = 'PGapp:login'
+PASSWORD_RESET_TIMEOUT_DAYS = 3
+
+# Email
+EMAIL_BACKENDS = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+
+# Cache
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+
+CACHES = {
+	'default': {
+		'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+		'LOCATION': os.path.join(BASE_DIR, 'cache_folder'),
+		},
+	'session_storage': {
+		'BACKEND': 'django_redis.cache.RedisCache',
+		"LOCATION": "redis://redis:6379/1",
+		}
+	}
+
+# Django-debug-toolbar
+INTERNAL_IPS = [
+	"127.0.0.1",
+	]
+mimetypes.add_type("application/javascript", ".js", True)
+
+# Django-cors-headers
+CORS_ORIGIN_ALLOW_ALL = True
+
+# REST
+# Note: comment BrowsableAPIRenderer line while going in production
+REST_FRAMEWORK = {
+	'DEFAULT_RENDERER_CLASSES': [
+		'rest_framework.renderers.JSONRenderer',
+		'rest_framework.renderers.BrowsableAPIRenderer',
+		],
+	'DEFAULT_AUTHENTICATION_CLASSES': [
+		'rest_framework.authentication.BasicAuthentication',
+		'rest_framework.authentication.SessionAuthentication',
+		'rest_framework_simplejwt.authentication.JWTAuthentication',
+		],
+	'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+	'PAGE_SIZE': 3,
+	}
+
+SIMPLE_JWT = {
+	"ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+	"REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+	"ROTATE_REFRESH_TOKENS": False,
+	"BLACKLIST_AFTER_ROTATION": False,
+	"UPDATE_LAST_LOGIN": False,
+
+	"ALGORITHM": "HS256",
+	"SIGNING_KEY": SECRET_KEY,
+	"VERIFYING_KEY": "",
+	"AUDIENCE": None,
+	"ISSUER": None,
+	"JSON_ENCODER": None,
+	"JWK_URL": None,
+	"LEEWAY": 0,
+
+	"AUTH_HEADER_TYPES": ("Bearer",),
+	"AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+	"USER_ID_FIELD": "id",
+	"USER_ID_CLAIM": "user_id",
+	"USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
+
+	"AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+	"TOKEN_TYPE_CLAIM": "token_type",
+	"TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
+
+	"JTI_CLAIM": "jti",
+
+	"SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
+	"SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
+	"SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
+
+	"TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
+	"TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSerializer",
+	"TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
+	"TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
+	"SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
+	"SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
+	}
+
+# LOGGING
+
+LOGGING = {
+	'version': 1,
+	'disable_existing_loggers': True,
+	'filters': {
+		'require_debug_false': {
+			'()': 'django.utils.log.RequireDebugFalse',
+			},
+		'require_debug_true': {
+			'()': 'django.utils.log.RequireDebugTrue',
+			},
+		},
+	'formatters': {
+		'simple': {
+			'format': '[%(asctime)s] %(levelname)s: %(message)s',
+			'datefmt': '%Y.%m.%d %H:%M:%S',
+			},
+		},
+	'handlers': {
+		'console_dev': {
+			'class': 'logging.StreamHandler',
+			'formatter': 'simple',
+			'filters': ['require_debug_true'],
+			},
+		'console_prod': {
+			'class': 'logging.StreamHandler',
+			'formatter': 'simple',
+			'level': 'ERROR',
+			'filters': ['require_debug_true'],
+			},
+		'file': {
+			'class': 'logging.handlers.RotatingFileHandler',
+			'filename': 'D:/A_PYTHONPROJECTS/Revashing/folder/LOGGING_MSG/django-site.log',
+			'backupCount': 10,
+			'formatter': 'simple',
+			},
+		},
+	'loggers': {
+		'django': {
+			'handlers': ['console_dev', 'console_prod'],
+			},
+		'django.server': {
+			'handlers': ['file'],
+			'level': 'INFO',
+			'propagate': True,
+			},
+		},
+	}

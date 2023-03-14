@@ -1,0 +1,17 @@
+{% extends 'PGapp/Main_Logic/base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+	<h2>Login</h2>
+	{% if user.is_authenticated %}
+		<p>You are already signed in</p>
+	{% else %}
+		<form method="post">
+			{% csrf_token %}
+			{{ form|crispy }}
+			<input type="hidden" name="next" value="{{ next }}">
+			<input type="submit" value="Enter">
+		</form>
+	{% endif %}
+{% endblock %}
