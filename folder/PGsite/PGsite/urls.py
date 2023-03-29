@@ -1,11 +1,13 @@
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.conf.urls.static import static
-from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.contrib.staticfiles.views import serve
 from django.views.decorators.cache import never_cache
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+# deploy imports
+from django.contrib.staticfiles.views import serve
+from django.views.static import serve as media_serve
+from django.conf import settings
 
 urlpatterns = [
 	path('admin/', admin.site.urls),
@@ -26,3 +28,9 @@ if settings.DEBUG:
 		path('static/<path:path>', never_cache(serve)),
 	] + urlpatterns
 	urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+handler404 = 'PGapp.views.handling_404'
+handler500 = 'PGapp.views.handling_500'
+handler403 = 'PGapp.views.handling_403'
+handler400 = 'PGapp.views.handling_400'

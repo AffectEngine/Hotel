@@ -105,6 +105,7 @@ class HotelRooms(models.Model):
 	class Meta:
 		verbose_name = 'Hotel Room'
 		verbose_name_plural = 'Hotel Rooms'
+		ordering = ['price']
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

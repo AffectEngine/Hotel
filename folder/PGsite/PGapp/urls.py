@@ -39,3 +39,4 @@ urlpatterns = [
 
 	path('email_test/', email_test, name='email_test'),
 	]
+

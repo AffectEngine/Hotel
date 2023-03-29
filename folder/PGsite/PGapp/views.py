@@ -11,6 +11,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.core.paginator import Paginator
 from django.core.mail import send_mail, send_mass_mail
+from django.contrib.auth.decorators import login_required, permission_required
 
 from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .serializers import RubricSerializer, ThingSerializer
@@ -83,6 +84,7 @@ def delete_rubric(request, id):
 		return render(request, 'PGapp/Rubric/confirm_delete_rubric.html', context)
 
 
+@permission_required('403.html', raise_exception=True)
 def employees(request):
 	employee_source = HotelEmployees.objects.all()
 	return render(request, 'PGapp/Employee/employees.html', {'title': 'Employees', 'employee_source': employee_source})
@@ -223,6 +225,24 @@ class ThingViewSet(viewsets.ModelViewSet):
 	def things_rubrics_list_display(self, request, pk=None):
 		cats = PGSRubric.objects.get(pk=pk)
 		return Response({'cats': cats.rubric})
+
+
+# HANDLERS
+
+def handling_404(request, exception):
+	return render(request, 'PGapp/Errorcodes/404.html', {})
+
+
+def handling_500(request, *args, **argv):
+	return render(request, 'PGapp/Errorcodes/500.html', status=500)
+
+
+def handling_403(request, exception):
+	return render(request, 'PGapp/Errorcodes/403.html', {})
+
+
+def handling_400(request, exception):
+	return render(request, 'PGapp/Errorcodes/400.html', {})
 
 
 # class RubricApiList(generics.ListCreateAPIView):

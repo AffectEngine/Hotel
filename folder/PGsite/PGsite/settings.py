@@ -28,9 +28,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("DJANGO_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
 
 # Application definition
 
@@ -87,7 +87,8 @@ TEMPLATES = [
 		'BACKEND': 'django.template.backends.django.DjangoTemplates',
 		'DIRS': [
 			os.path.join(BASE_DIR, 'templates'),
-			os.path.join(BASE_DIR, 'PGapp', 'templates', 'PGapp'),
+			os.path.join(BASE_DIR, 'PGapp', 'templates'),
+			os.path.join(BASE_DIR, 'PGapp', 'Errorcodes'),
 			],
 		'APP_DIRS': True,
 		'OPTIONS': {
@@ -348,3 +349,8 @@ LOGGING = {
 			},
 		},
 	}
+
+# HTTPS
+
+
+
